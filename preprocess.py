@@ -78,6 +78,8 @@ def main(args):
         while len(cell.counters) < 4:
             cell.counters.append(0)
 
+    items = ['s', str(len(cells)), str(len(counters)), str(len(terminals))]
+    args.output.write(' '.join(items)+'\n')
     for cell in cells:
         items = ['a', str(cell.n), str(cell.r), str(cell.c)] + list(map(str, cell.neighbors)) + list(map(str, cell.counters))
         args.output.write(' '.join(items)+'\n')
