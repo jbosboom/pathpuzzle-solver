@@ -12,9 +12,37 @@ class Cell(object):
         self.counters = []
 
 
+def parse_font(input):
+    terminals = []
+    for line in input:
+        line = line.strip()
+        if line.startswith('rows'):
+            rows = line.split(' ')[1:]
+        elif line.startswith('cols'):
+            cols = line.split(' ')[1:]
+        elif line.startswith('terminal'):
+            line = line.split(' ')[1:]
+            terminals.append((int(line[0]), int(line[1])))
+
+    lines = [['x'] * (len(cols)+1) for _ in range(len(rows)+1)]
+    for i, clue in enumerate(rows):
+        clue = '' if clue == '-' else clue
+        lines[i][-1] = clue
+    for i, clue in enumerate(cols):
+        clue = '' if clue == '-' else clue
+        lines[-1][i] = clue
+    lines[-1][-1] = ''
+    for r, c in terminals:
+        lines[r][c] = 'T'
+    return lines
+
+
 def main(args):
-    lines = [x.strip('\n') for x in args.input.readlines()]
-    lines = [x.split('\t') for x in lines]
+    if args.font:
+        lines = parse_font(args.input)
+    else:
+        lines = [x.strip('\n') for x in args.input.readlines()]
+        lines = [x.split('\t') for x in lines]
 
     things = {}
     cell_number = 0
@@ -95,4 +123,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('input', type=argparse.FileType('r'))
     parser.add_argument('output', type=argparse.FileType('w'))
+    parser.add_argument('--font', action='store_true')
     main(parser.parse_args())
